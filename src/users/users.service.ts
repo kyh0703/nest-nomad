@@ -6,12 +6,14 @@ import { UserEntity } from './user.entity';
 import { Connection, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ulid } from 'ulid';
-import { QueryResult } from 'typeorm/query-runner/QueryResult';
+import { NotFoundException } from '@nestjs/common/exceptions';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     private emailService: EmailService,
+    private authService: AuthService,
     @InjectRepository(UserEntity)
     private usersRepository: Repository<UserEntity>,
     private connection: Connection,
@@ -76,6 +78,7 @@ export class UsersService {
       // throw new InternalServerErrorException();
     });
   }
+
   private async checkUserExists(emailAddress: string) {
     const user = await this.usersRepository.findOne({ email: emailAddress });
     return user !== undefined;
@@ -103,21 +106,23 @@ export class UsersService {
     );
   }
 
-  private async verifyEmail(sighupVerifyToken: string): Promise<string> {
+  private async verifyEmail(signupVerifyToken: string): Promise<string> {
+    const user = await this.usersRepository.findOne({ signupVerifyToken });
+    if (!user) {
+      throw new NotFoundException('유저가 존재하지 않습니다.');
+    }
+    return this.authService.login({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+    });
     // TODO
     // 1. DB에서 sighupVerifyToken으로 회원가입 처리중인 유저가 있는지 조회하고 없다면 에러 처리
     // 2. 바로 로그인 상태가 되도록 JWT를 발급
     throw new Error('Method not implemented.');
   }
 
-  private login(email: string, password: string): Promise<string> {
-    // TODO
-    // 1. email, password를 가진 유저가 존재하는지 DB에서 확인하고 없당면 에러 처리
-    // 2. JWT 발급
-    throw new Error('Method not implemented.');
-  }
-
-  private async getUserInfo(userId: string): Promise<UserInfo> {
-    throw new Error('<method not implemented.');
+  async getUserInfo(userId: string): Promise<UserInfo> {
+    return await this.usersRepository.findOne({ id: userId });
   }
 }

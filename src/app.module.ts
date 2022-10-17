@@ -5,6 +5,8 @@ import { ConfigModule } from '@nestjs/config';
 import emailConfig from './config/emailConfig';
 import { validationSchema } from './config/validationSchema';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AuthController } from './auth/auth.controller';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -26,8 +28,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     }),
     UsersModule,
     EmailModule,
+    AuthModule,
   ],
-  controllers: [],
+  controllers: [AuthController],
   providers: [],
 })
 export class AppModule {}
