@@ -1,5 +1,5 @@
 POST http://localhost:3000/reports
-content-type: application/json
+Content-Type: application/json
 
 {
   "make": "toyota",
@@ -8,5 +8,14 @@ content-type: application/json
   "mileage": 100000,
   "lng": 0,
   "lat": 0,
-  "price": 500000
+  "price": 500000,
+  "approved": false
+}
+
+### Approve an exiting report
+PATCH http://localhost:3000/reports/1
+Content-Type: application/json
+
+{
+  "approved": true
 }
