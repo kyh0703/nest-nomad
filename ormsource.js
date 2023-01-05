@@ -1,5 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const config = require('./ormconfig');
+const config = require('./src/ormconfig');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const DataSource = require('typeorm').DataSource;
 
